@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Create Persona</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-grid">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label for="reference_image">Reference Image</label>
+                        <div class="image-upload-container">
+                            <div class="image-preview" id="imagePreview">
+                                <div class="upload-placeholder">
+                                    <span class="material-icons">add_photo_alternate</span>
+                                    <p>Upload Reference Image</p>
+                                </div>
+                                <img src="#" alt="Preview" class="preview-image" style="display: none;">
+                            </div>
+                            <input type="file" id="reference_image" name="reference_image" accept="image/*" class="image-upload-input">
+                        </div>
+                        <p class="form-help">Upload a clear image of the face you want to use as reference</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description (Alternative to Image)</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Describe the appearance if you don't have a reference image..."></textarea>
+                        <p class="form-help">Provide a detailed description if you don't have a reference image</p>
+                    </div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-group">
+                        <label for="name">Persona Name</label>
+                        <input type="text" id="name" name="name" required placeholder="e.g., Sophia, Alex, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Age Range</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="age_18_25" name="age_range" value="18-25" checked>
+                                <label for="age_18_25">18-25</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="age_26_35" name="age_range" value="26-35">
+                                <label for="age_26_35">26-35</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="age_36_45" name="age_range" value="36-45">
+                                <label for="age_36_45">36-45</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="age_46_plus" name="age_range" value="46+">
+                                <label for="age_46_plus">46+</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Style</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="style_professional" name="style" value="professional" checked>
+                                <label for="style_professional">Professional</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="style_casual" name="style" value="casual">
+                                <label for="style_casual">Casual</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="style_artistic" name="style" value="artistic">
+                                <label for="style_artistic">Artistic</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="style_athletic" name="style" value="athletic">
+                                <label for="style_athletic">Athletic</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="style_glamorous" name="style" value="glamorous">
+                                <label for="style_glamorous">Glamorous</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="style_custom" name="style" value="custom">
+                                <label for="style_custom">Custom</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Personality Traits</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_confident" name="personality_traits" value="confident" checked>
+                                <label for="trait_confident">Confident</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_creative" name="personality_traits" value="creative" checked>
+                                <label for="trait_creative">Creative</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_serious" name="personality_traits" value="serious">
+                                <label for="trait_serious">Serious</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_playful" name="personality_traits" value="playful">
+                                <label for="trait_playful">Playful</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_mysterious" name="personality_traits" value="mysterious">
+                                <label for="trait_mysterious">Mysterious</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trait_friendly" name="personality_traits" value="friendly">
+                                <label for="trait_friendly">Friendly</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additional_notes">Additional Notes</label>
+                        <textarea id="additional_notes" name="additional_notes" rows="3" placeholder="Any additional details about your persona..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn secondary">Cancel</a>
+                <button type="submit" class="btn primary">Create Persona</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Image preview functionality
+    document.getElementById('reference_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewImage = document.querySelector('.preview-image');
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                document.querySelector('.upload-placeholder').style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

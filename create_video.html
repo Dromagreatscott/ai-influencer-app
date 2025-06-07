@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Create Video</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="post" id="videoForm">
+            <div class="form-grid">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label>Source Image</label>
+                        <div class="image-selection">
+                            <div class="selected-image" id="selectedImage">
+                                <div class="selection-placeholder">
+                                    <span class="material-icons">image</span>
+                                    <p>Select an image first</p>
+                                </div>
+                                <img src="#" alt="Selected Image" class="preview-image" style="display: none;">
+                            </div>
+                            <button type="button" class="btn secondary" id="browseImagesBtn">Browse Images</button>
+                        </div>
+                    </div>
+
+                    <div class="image-browser" id="imageBrowser" style="display: none;">
+                        <div class="browser-header">
+                            <h3>Select Source Image</h3>
+                            <button type="button" class="btn icon" id="closeBrowserBtn">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="browser-content">
+                            <div class="image-grid">
+                                <!-- Placeholder images - would be populated from actual gallery -->
+                                <div class="image-item" data-id="1">
+                                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Image 1">
+                                </div>
+                                <div class="image-item" data-id="2">
+                                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Image 2">
+                                </div>
+                                <div class="image-item" data-id="3">
+                                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Image 3">
+                                </div>
+                                <div class="image-item" data-id="4">
+                                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Image 4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="browser-footer">
+                            <button type="button" class="btn secondary" id="cancelSelectBtn">Cancel</button>
+                            <button type="button" class="btn primary" id="confirmSelectBtn">Select Image</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-group">
+                        <label>Video Type</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="type_animate" name="video_type" value="animate" checked>
+                                <label for="type_animate">Animate Image</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="type_face_swap" name="video_type" value="face_swap">
+                                <label for="type_face_swap">Face Swap</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="animateOptions">
+                        <div class="form-group">
+                            <label>Motion</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="motion_subtle" name="motion_type" value="subtle" checked>
+                                    <label for="motion_subtle">Subtle</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="motion_medium" name="motion_type" value="medium">
+                                    <label for="motion_medium">Medium</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="motion_strong" name="motion_type" value="strong">
+                                    <label for="motion_strong">Strong</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="faceSwapOptions" style="display: none;">
+                        <div class="form-group">
+                            <label for="target_video">Target Video</label>
+                            <select id="target_video" name="target_video">
+                                <option value="" disabled selected>Select a template video</option>
+                                <option value="template1">Business Presentation</option>
+                                <option value="template2">Social Media Influencer</option>
+                                <option value="template3">Fitness Instructor</option>
+                                <option value="template4">Public Speaker</option>
+                            </select>
+                            <p class="form-help">Choose a template video to apply your persona's face</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="duration_5" name="duration" value="5" checked>
+                                <label for="duration_5">5 seconds</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="duration_10" name="duration" value="10">
+                                <label for="duration_10">10 seconds</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="duration_15" name="duration" value="15">
+                                <label for="duration_15">15 seconds</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="duration_custom" name="duration" value="custom">
+                                <label for="duration_custom">Custom</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quality</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="quality_draft" name="quality" value="draft">
+                                <label for="quality_draft">Draft (Faster)</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quality_standard" name="quality" value="standard" checked>
+                                <label for="quality_standard">Standard</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quality_high" name="quality" value="high">
+                                <label for="quality_high">High (Slower)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn secondary">Cancel</a>
+                <button type="submit" class="btn primary" id="createVideoBtn" disabled>Create Video</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="video-result" id="videoResult" style="display: none;">
+        <h2>Generated Video</h2>
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>Creating your video...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="result-content" id="resultContent" style="display: none;">
+            <div class="video-player">
+                <video controls id="resultVideo">
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="result-actions">
+                <button class="btn secondary" id="createNewBtn">Create New Video</button>
+                <button class="btn primary" id="saveVideoBtn">Save to Gallery</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Toggle between animation and face swap options
+    document.querySelectorAll('input[name="video_type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'animate') {
+                document.getElementById('animateOptions').style.display = 'block';
+                document.getElementById('faceSwapOptions').style.display = 'none';
+            } else {
+                document.getElementById('animateOptions').style.display = 'none';
+                document.getElementById('faceSwapOptions').style.display = 'block';
+            }
+        });
+    });
+
+    // Image browser functionality
+    document.getElementById('browseImagesBtn').addEventListener('click', function() {
+        document.getElementById('imageBrowser').style.display = 'block';
+    });
+
+    document.getElementById('closeBrowserBtn').addEventListener('click', function() {
+        document.getElementById('imageBrowser').style.display = 'none';
+    });
+
+    document.getElementById('cancelSelectBtn').addEventListener('click', function() {
+        document.getElementById('imageBrowser').style.display = 'none';
+    });
+
+    // Image selection
+    let selectedImageId = null;
+    document.querySelectorAll('.image-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.image-item').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedImageId = this.dataset.id;
+        });
+    });
+
+    document.getElementById('confirmSelectBtn').addEventListener('click', function() {
+        if (selectedImageId) {
+            // In a real implementation, this would use the actual selected image
+            document.querySelector('.selection-placeholder').style.display = 'none';
+            document.querySelector('.preview-image').style.display = 'block';
+            document.querySelector('.preview-image').src = "{{ url_for('static', filename='img/placeholder.jpg') }}";
+            document.getElementById('imageBrowser').style.display = 'none';
+            document.getElementById('createVideoBtn').disabled = false;
+        }
+    });
+
+    // Form submission and video generation
+    document.getElementById('videoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show video result section and loading indicator
+        document.getElementById('videoResult').style.display = 'block';
+        document.getElementById('loadingIndicator').style.display = 'flex';
+        document.getElementById('resultContent').style.display = 'none';
+        
+        // Simulate progress
+        let progress = 0;
+        const progressFill = document.getElementById('progressFill');
+        const progressInterval = setInterval(() => {
+            progress += 2;
+            progressFill.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+                setTimeout(() => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    document.getElementById('resultContent').style.display = 'block';
+                    
+                    // Set a placeholder video source - would be replaced with actual generated video
+                    document.getElementById('resultVideo').src = "{{ url_for('static', filename='videos/placeholder.mp4') }}";
+                }, 500);
+            }
+        }, 200);
+        
+        // Scroll to results
+        document.getElementById('videoResult').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Reset form for new video
+    document.getElementById('createNewBtn').addEventListener('click', function() {
+        document.getElementById('videoResult').style.display = 'none';
+    });
+</script>
+{% endblock %}
+{% endblock %}

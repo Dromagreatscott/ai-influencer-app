@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <div class="action-buttons">
+            <a href="{{ url_for('create_persona') }}" class="btn primary">Create Persona</a>
+            <a href="{{ url_for('generate_content') }}" class="btn secondary">Generate Content</a>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>My Personas</h2>
+                <a href="{{ url_for('personas') }}" class="view-all">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="persona-grid">
+                    {% for persona in personas %}
+                    <div class="persona-card">
+                        <div class="persona-image">
+                            <img src="{{ persona.image }}" alt="{{ persona.name }}">
+                        </div>
+                        <div class="persona-info">
+                            <h3>{{ persona.name }}</h3>
+                            <a href="{{ url_for('generate_content') }}?persona={{ persona.id }}" class="btn small">Generate</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="persona-card add-new">
+                        <a href="{{ url_for('create_persona') }}">
+                            <div class="add-icon">+</div>
+                            <p>New Persona</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Recent Content</h2>
+                <a href="{{ url_for('gallery') }}" class="view-all">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="content-grid">
+                    {% for content in recent_content %}
+                    <div class="content-card">
+                        <div class="content-image">
+                            <img src="{{ content.path }}" alt="Content">
+                            {% if content.type == 'video' %}
+                            <div class="video-indicator">
+                                <span class="material-icons">play_circle</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="content-actions">
+                            <a href="#" class="btn icon" title="Edit"><span class="material-icons">edit</span></a>
+                            <a href="#" class="btn icon" title="Download"><span class="material-icons">download</span></a>
+                            <a href="#" class="btn icon" title="Share"><span class="material-icons">share</span></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h2>Quick Actions</h2>
+        </div>
+        <div class="card-body">
+            <div class="quick-actions">
+                <a href="{{ url_for('generate_content') }}" class="action-card">
+                    <div class="action-icon">
+                        <span class="material-icons">image</span>
+                    </div>
+                    <h3>Generate Images</h3>
+                    <p>Create high-quality AI images</p>
+                </a>
+                <a href="{{ url_for('create_video') }}" class="action-card">
+                    <div class="action-icon">
+                        <span class="material-icons">movie</span>
+                    </div>
+                    <h3>Create Videos</h3>
+                    <p>Convert images to videos</p>
+                </a>
+                <a href="{{ url_for('export') }}" class="action-card">
+                    <div class="action-icon">
+                        <span class="material-icons">cloud_download</span>
+                    </div>
+                    <h3>Export Content</h3>
+                    <p>Download or share your content</p>
+                </a>
+                <a href="#" class="action-card">
+                    <div class="action-icon">
+                        <span class="material-icons">help</span>
+                    </div>
+                    <h3>Tutorials</h3>
+                    <p>Learn how to use the app</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

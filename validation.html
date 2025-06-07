@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Validation Results</h1>
+    </div>
+
+    <div class="validation-summary">
+        <div class="summary-card {% if results.overall_result %}success{% else %}error{% endif %}">
+            <h2>Overall Validation Result: {% if results.overall_result %}PASS{% else %}FAIL{% endif %}</h2>
+            <p>Validation completed in {{ results.duration_seconds }} seconds</p>
+            <p>Timestamp: {{ results.timestamp }}</p>
+        </div>
+    </div>
+
+    <div class="validation-modules">
+        {% for module_name, module_data in results.modules.items() %}
+        <div class="module-card">
+            <div class="module-header {% if module_data.passes_validation %}success{% else %}error{% endif %}">
+                <h3>{{ module_name|replace('_', ' ')|title }}</h3>
+                <span class="validation-badge {% if module_data.passes_validation %}success{% else %}error{% endif %}">
+                    {% if module_data.passes_validation %}PASS{% else %}FAIL{% endif %}
+                </span>
+            </div>
+            <div class="module-body">
+                {% if module_data.test_cases %}
+                <h4>Test Cases</h4>
+                <div class="test-cases">
+                    {% for test in module_data.test_cases %}
+                    <div class="test-case {% if test.passes %}success{% else %}error{% endif %}">
+                        <div class="test-header">
+                            <h5>{{ test.name }}</h5>
+                            <span class="validation-badge {% if test.passes %}success{% else %}error{% endif %}">
+                                {% if test.passes %}PASS{% else %}FAIL{% endif %}
+                            </span>
+                        </div>
+                        <div class="test-details">
+                            {% if test.error %}
+                            <p class="error-message">Error: {{ test.error }}</p>
+                            {% else %}
+                                {% if test.quality_score is defined %}
+                                <p>Quality Score: {{ test.quality_score }}/10.0</p>
+                                {% endif %}
+                                {% if test.consistency_score is defined %}
+                                <p>Consistency Score: {{ test.consistency_score }}/10.0</p>
+                                {% endif %}
+                                {% if test.matches_glambase_quality is defined %}
+                                <p>Matches Glambase Quality: {{ test.matches_glambase_quality }}</p>
+                                {% endif %}
+                                {% if test.image_path is defined %}
+                                <p>Image: {{ test.image_path }}</p>
+                                {% endif %}
+                                {% if test.video_path is defined %}
+                                <p>Video: {{ test.video_path }}</p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="validation-actions">
+        <a href="{{ url_for('dashboard') }}" class="btn secondary">Back to Dashboard</a>
+        <a href="{{ url_for('validate') }}" class="btn primary">Run Validation Again</a>
+    </div>
+</div>
+
+<style>
+    .validation-summary {
+        margin-bottom: 2rem;
+    }
+    
+    .summary-card {
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-card.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        border: 1px solid var(--success-color);
+    }
+    
+    .summary-card.error {
+        background-color: rgba(244, 67, 54, 0.1);
+        border: 1px solid var(--error-color);
+    }
+    
+    .module-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+    }
+    
+    .module-header.success {
+        background-color: rgba(76, 175, 80, 0.1);
+    }
+    
+    .module-header.error {
+        background-color: rgba(244, 67, 54, 0.1);
+    }
+    
+    .module-body {
+        padding: 1.5rem;
+    }
+    
+    .validation-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+    
+    .validation-badge.success {
+        background-color: var(--success-color);
+        color: white;
+    }
+    
+    .validation-badge.error {
+        background-color: var(--error-color);
+        color: white;
+    }
+    
+    .test-cases {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .test-case {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+    
+    .test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+    }
+    
+    .test-header h5 {
+        margin: 0;
+    }
+    
+    .test-case.success .test-header {
+        background-color: rgba(76, 175, 80, 0.1);
+    }
+    
+    .test-case.error .test-header {
+        background-color: rgba(244, 67, 54, 0.1);
+    }
+    
+    .test-details {
+        padding: 1rem;
+    }
+    
+    .error-message {
+        color: var(--error-color);
+    }
+    
+    .validation-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}

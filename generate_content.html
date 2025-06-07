@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Generate Content</h1>
+    </div>
+
+    <div class="form-container">
+        <form method="post" id="generateForm">
+            <div class="form-grid">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label for="persona">Select Persona</label>
+                        <select id="persona" name="persona_id" required>
+                            <option value="" disabled selected>Choose a persona</option>
+                            {% for persona in personas %}
+                            <option value="{{ persona.id }}">{{ persona.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="persona-preview" id="personaPreview">
+                        <div class="preview-placeholder">
+                            <span class="material-icons">person</span>
+                            <p>Select a persona to preview</p>
+                        </div>
+                        <div class="preview-content" style="display: none;">
+                            <img src="#" alt="Persona Preview" id="previewImage">
+                            <h3 id="previewName"></h3>
+                            <p id="previewDetails"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-group">
+                        <label>Content Type</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="type_portrait" name="content_type" value="portrait" checked>
+                                <label for="type_portrait">Portrait</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="type_full_body" name="content_type" value="full_body">
+                                <label for="type_full_body">Full Body</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="type_action" name="content_type" value="action">
+                                <label for="type_action">Action</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="type_social" name="content_type" value="social_post">
+                                <label for="type_social">Social Post</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Setting</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="setting_studio" name="setting" value="studio" checked>
+                                <label for="setting_studio">Studio</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="setting_outdoor" name="setting" value="outdoor">
+                                <label for="setting_outdoor">Outdoor</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="setting_urban" name="setting" value="urban">
+                                <label for="setting_urban">Urban</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="setting_nature" name="setting" value="nature">
+                                <label for="setting_nature">Nature</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additional_prompt">Additional Prompt</label>
+                        <textarea id="additional_prompt" name="additional_prompt" rows="3" placeholder="Add specific details to guide the generation..."></textarea>
+                        <p class="form-help">Describe specific details you want to include in the generated content</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="quantity_1" name="quantity" value="1">
+                                <label for="quantity_1">1</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quantity_4" name="quantity" value="4" checked>
+                                <label for="quantity_4">4</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quantity_9" name="quantity" value="9">
+                                <label for="quantity_9">9</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quantity_16" name="quantity" value="16">
+                                <label for="quantity_16">16</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quality</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="quality_draft" name="quality" value="draft">
+                                <label for="quality_draft">Draft (Faster)</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quality_standard" name="quality" value="standard" checked>
+                                <label for="quality_standard">Standard</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="quality_high" name="quality" value="high">
+                                <label for="quality_high">High (Slower)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn secondary">Cancel</a>
+                <button type="submit" class="btn primary">Generate Content</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="generation-results" id="generationResults" style="display: none;">
+        <h2>Generated Content</h2>
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>Generating high-quality content...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="results-grid" id="resultsGrid"></div>
+        <div class="results-actions">
+            <button class="btn secondary" id="regenerateBtn">Regenerate</button>
+            <button class="btn primary" id="saveAllBtn">Save All</button>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Persona preview functionality
+    document.getElementById('persona').addEventListener('change', function() {
+        const personaId = this.value;
+        if (personaId) {
+            // In a real implementation, this would fetch persona data from the server
+            // For now, we'll simulate it with placeholder data
+            document.querySelector('.preview-placeholder').style.display = 'none';
+            document.querySelector('.preview-content').style.display = 'block';
+            
+            // Placeholder data - would be replaced with actual API call
+            document.getElementById('previewImage').src = "{{ url_for('static', filename='img/placeholder.jpg') }}";
+            document.getElementById('previewName').textContent = this.options[this.selectedIndex].text;
+            document.getElementById('previewDetails').textContent = "Age: 25-35 • Style: Professional";
+        } else {
+            document.querySelector('.preview-placeholder').style.display = 'flex';
+            document.querySelector('.preview-content').style.display = 'none';
+        }
+    });
+
+    // Form submission and results display
+    document.getElementById('generateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show results section and loading indicator
+        document.getElementById('generationResults').style.display = 'block';
+        document.getElementById('loadingIndicator').style.display = 'flex';
+        document.getElementById('resultsGrid').innerHTML = '';
+        
+        // Simulate progress
+        let progress = 0;
+        const progressFill = document.getElementById('progressFill');
+        const progressInterval = setInterval(() => {
+            progress += 5;
+            progressFill.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+                setTimeout(() => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    displayResults();
+                }, 500);
+            }
+        }, 300);
+        
+        // Scroll to results
+        document.getElementById('generationResults').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function displayResults() {
+        const resultsGrid = document.getElementById('resultsGrid');
+        const quantity = parseInt(document.querySelector('input[name="quantity"]:checked').value);
+        
+        // Clear previous results
+        resultsGrid.innerHTML = '';
+        
+        // Add placeholder results
+        for (let i = 0; i < quantity; i++) {
+            const resultCard = document.createElement('div');
+            resultCard.className = 'result-card';
+            
+            resultCard.innerHTML = `
+                <div class="result-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Generated Content">
+                </div>
+                <div class="result-actions">
+                    <button class="btn icon" title="Edit"><span class="material-icons">edit</span></button>
+                    <button class="btn icon" title="Download"><span class="material-icons">download</span></button>
+                    <button class="btn icon" title="Create Video"><span class="material-icons">movie</span></button>
+                </div>
+            `;
+            
+            resultsGrid.appendChild(resultCard);
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %}
